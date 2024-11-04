@@ -5,7 +5,6 @@ Email: pshin8@uic.edu
 
 ## Videos
 - Job Running in Spark Local Mode - [link_to_your_video]
-- Job Running in AWS EMR - [link_to_your_video]
 
 ## LLM Training Pipeline
 This project implements a distributed processing pipeline for training language models using Apache Spark. The pipeline consists of two main jobs:
