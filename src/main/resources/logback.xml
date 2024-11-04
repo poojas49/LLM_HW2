@@ -1,0 +1,16 @@
+<!-- src/main/resources/logback.xml -->
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT" />
+    </root>
+
+    <logger name="ClusterRunner" level="debug"/>
+    <logger name="jobs.SlidingWindowJob" level="debug"/>
+    <logger name="jobs.TrainingJob" level="debug"/>
+</configuration>
