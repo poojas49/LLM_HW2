@@ -1,5 +1,6 @@
 package jobs
 
+import com.typesafe.config.ConfigFactory
 import org.apache.spark.sql.SparkSession
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration
 import org.deeplearning4j.nn.conf.layers.{DenseLayer, OutputLayer}
@@ -10,6 +11,8 @@ import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction
 import java.io.File
 
 class TrainingJob(spark: SparkSession) {
+  private val config = ConfigFactory.load()
+  private val trainingConfig = config.getConfig("training")
 
   case class TrainingData(
                            all: Array[(Array[Double], Array[Double])],
@@ -42,24 +45,24 @@ class TrainingJob(spark: SparkSession) {
 
   private def configureNetwork(): MultiLayerNetwork = {
     val conf = new NeuralNetConfiguration.Builder()
-      .seed(TrainingJob.Seed)
-      .updater(new org.nd4j.linalg.learning.config.Adam(TrainingJob.LearningRate))
+      .seed(trainingConfig.getLong("seed"))
+      .updater(new org.nd4j.linalg.learning.config.Adam(trainingConfig.getDouble("learningRate")))
       .list()
       .layer(new DenseLayer.Builder()
-        .nIn(50)
-        .nOut(128)
+        .nIn(trainingConfig.getInt("inputSize"))
+        .nOut(trainingConfig.getInt("hiddenLayerSize"))
         .activation(Activation.RELU)
         .build())
       .layer(new OutputLayer.Builder(LossFunction.MSE)
         .activation(Activation.IDENTITY)
-        .nIn(128)
+        .nIn(trainingConfig.getInt("hiddenLayerSize"))
         .nOut(1)
         .build())
       .build()
 
     val network = new MultiLayerNetwork(conf)
     network.init()
-    network.setListeners(new ScoreIterationListener(10))
+    network.setListeners(new ScoreIterationListener(trainingConfig.getInt("scoreIterationListenerFrequency")))
     network
   }
 
@@ -75,8 +78,8 @@ class TrainingJob(spark: SparkSession) {
     val network = configureNetwork()
 
     // Train the network with a functional approach
-    println(s"Starting training for ${TrainingJob.NumEpochs} epochs...")
-    for (epoch <- 1 to TrainingJob.NumEpochs) {
+    println(s"Starting training for ${trainingConfig.getInt("numEpochs")} epochs...")
+    for (epoch <- 1 to trainingConfig.getInt("numEpochs")) {
 
       // Calculate epoch loss in a functional way
       val epochLoss = data.training
@@ -112,10 +115,5 @@ class TrainingJob(spark: SparkSession) {
 }
 
 object TrainingJob {
-  val BatchSize = 32
-  val NumEpochs = 10
-  val LearningRate = 0.001
-  val Seed = 12345L
-
   def apply(spark: SparkSession): TrainingJob = new TrainingJob(spark)
 }
