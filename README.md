@@ -4,7 +4,7 @@ Name: Pooja Chandrakant Shinde
 Email: pshin8@uic.edu
 
 ## Videos
-- Job Running in Spark Local Mode - https://youtu.be/wf4i_mCgV90
+- Job Running in Apache Spark  - https://youtu.be/wf4i_mCgV90
 
 ## LLM Training Pipeline
 This project implements a distributed processing pipeline for training language models using Apache Spark. The pipeline consists of two main jobs:
