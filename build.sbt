@@ -59,6 +59,10 @@ libraryDependencies ++= Seq(
   // ND4J Dependencies
   "org.nd4j" % "nd4j-native" % nd4jVersion,
   "org.nd4j" % "nd4j-native-platform" % nd4jVersion,
+
+  // Testing libraries
+  "org.scalatest" %% "scalatest" % "3.2.18" % Test,
+  "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test
 )
 
 // Add resolvers
